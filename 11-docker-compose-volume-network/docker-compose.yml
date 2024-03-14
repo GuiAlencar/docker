@@ -1,0 +1,54 @@
+services:
+  mysql:
+    image: mysql:8.0
+    command: '--default-authentication-plugin=mysql_native_password'
+    container_name: mysql-curso
+    environment:
+    - MYSQL_ROOT_PASSWORD=123456
+    - MYSQL_DATABASE=wordpress
+    - MYSQL_USER=wordpress
+    - MYSQL_PASSWORD=123456
+    expose:
+    - 3306
+    - 33060
+    restart: always
+    volumes:
+    - mysql_data:/var/lib/mysql
+    networks:
+    - backend
+
+  wordpress:
+    depends_on:
+    - mysql
+    image: wordpress:6.1.1
+    environment:
+    - WORDPRESS_DB_HOST=mysql
+    - WORDPRESS_DB_USER=wordpress
+    - WORDPRESS_DB_PASSWORD=123456
+    - WORDPRESS_DB_NAME=wordpress
+    ports:
+    - 9000:80
+    restart: always
+    networks:
+    - frontend
+    - backend
+
+volumes:
+  mysql_data: 
+    name: mysql-curso
+
+networks:
+  frontend:
+    name: frontend-curso
+    driver: bridge
+
+  backend:
+    name: backend-curso
+    driver: bridge
+
+# docker compose up -d
+
+# para destruir o volume
+# docker compose down --volumes
+
+    
